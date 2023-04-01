@@ -2,23 +2,28 @@ const button = document.querySelector("#button");
 const comic = document.querySelector("#comic");
 const caption = document.querySelector("#caption");
 
-function getRandomComic() {
-  const comicNumber = Math.floor(Math.random() * 2500);
-  const fetchUrl = `https://xkcd.com/${comicNumber}/info.0.json`;
-  const fetchOptions = { mode: 'no-cors' };
+async function getRandomComic() {
+  const comicNumber = Math.floor(Math.random() * 1000);
+  const fetchUrl = `https://xkcd.vercel.app/?comic=${comicNumber}`;
 
-  if (comicNumber % 2 === 0) {
-    fetchOptions.referrerPolicy = "no-referrer";
+  const fetchOptions = {
+    mode: 'cors',
+    referrerPolicy: comicNumber % 2 === 0 ? "no-referrer" : ""
+  };
+
+  try {
+    
+    const response = await fetch(fetchUrl, fetchOptions);
+    const string = await response.text();
+    const data = string === "" ? {} : JSON.parse(string);
+
+    comic.src = data.img;
+    comic.alt = data.alt;
+    caption.textContent = data.title;
+  } 
+  catch (error) {
+    console.error(error);
   }
-
-  fetch(fetchUrl, fetchOptions)
-    .then(response => response.json())
-    .then(data => {
-      comic.src = data.img;
-      comic.alt = data.alt;
-      caption.textContent = data.title;
-    })
-    .catch(error => console.error(error));
 }
 
 button.addEventListener("click", getRandomComic);
