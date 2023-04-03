@@ -8,8 +8,11 @@ async function getRandomComic() {
 
   const fetchOptions = {
     mode: 'cors',
-    referrerPolicy: comicNumber % 2 === 0 ? "no-referrer" : ""
   };
+  
+  if (comicNumber % 2 === 0) {
+    fetchOptions.referrerPolicy = "no-referrer";
+  }
 
   try {
     
